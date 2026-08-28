@@ -6,6 +6,17 @@
   body {
     @apply bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white;
   }
+
+  input, textarea, select {
+    color: #f8fafc;
+    background-color: #0f172a;
+    border-color: #1e293b;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: #6366f1;
+    outline: none;
+  }
 }
 
 /* Custom Glassmorphism & Glow Effects */
