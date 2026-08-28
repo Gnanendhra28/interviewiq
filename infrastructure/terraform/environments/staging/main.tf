@@ -70,6 +70,8 @@ module "api" {
   jwt_secret_id         = module.secrets.jwt_secret_id
   min_instances         = 1
   max_instances         = 5
+
+  depends_on = [module.secrets, module.database]
 }
 
 module "workers" {
@@ -82,6 +84,8 @@ module "workers" {
   db_url_secret_id      = module.secrets.db_url_secret_id
   min_instances         = 1
   max_instances         = 3
+
+  depends_on = [module.secrets, module.database]
 }
 
 module "frontend" {

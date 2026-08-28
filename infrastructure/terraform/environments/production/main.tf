@@ -72,6 +72,8 @@ module "api" {
   max_instances         = 20
   cpu_limit             = "4"
   memory_limit          = "4Gi"
+
+  depends_on = [module.secrets, module.database]
 }
 
 module "workers" {
@@ -86,6 +88,8 @@ module "workers" {
   max_instances         = 10
   cpu_limit             = "4"
   memory_limit          = "4Gi"
+
+  depends_on = [module.secrets, module.database]
 }
 
 module "frontend" {
