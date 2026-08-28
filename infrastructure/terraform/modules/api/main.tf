@@ -46,6 +46,16 @@ resource "google_cloud_run_v2_service" "api_service" {
       }
 
       env {
+        name = "SECRET_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = var.jwt_secret_id
+            version = "latest"
+          }
+        }
+      }
+
+      env {
         name = "JWT_SECRET_KEY"
         value_source {
           secret_key_ref {

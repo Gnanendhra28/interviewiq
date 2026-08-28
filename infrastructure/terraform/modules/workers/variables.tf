@@ -24,6 +24,10 @@ variable "db_url_secret_id" {
   type = string
 }
 
+variable "jwt_secret_id" {
+  type = string
+}
+
 variable "cpu_limit" {
   type    = string
   default = "2"

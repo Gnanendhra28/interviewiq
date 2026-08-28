@@ -84,6 +84,7 @@ module "workers" {
   container_image       = "us-central1-docker.pkg.dev/${var.project_id}/interviewiq-containers/worker:latest"
   service_account_email = module.iam.worker_sa_email
   db_url_secret_id      = module.secrets.db_url_secret_id
+  jwt_secret_id         = module.secrets.jwt_secret_id
   min_instances         = 1
   max_instances         = 3
   network_name          = module.networking.network_name
