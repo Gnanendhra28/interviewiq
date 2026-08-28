@@ -63,6 +63,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    COOKIE_SECURE: bool = False
 
     # Interview Lifecycle Policies (Explicitly Separated)
     INTERVIEW_INACTIVITY_TIMEOUT_MINUTES: int = 30

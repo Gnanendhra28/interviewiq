@@ -76,12 +76,12 @@ async def login(
         user_agent=user_agent
     )
 
-    # Set HttpOnly Refresh Token Cookie (ADR 013)
+    is_cookie_secure = getattr(settings, 'COOKIE_SECURE', False) or settings.ENVIRONMENT in ("production", "staging")
     response.set_cookie(
         key="refresh_token",
         value=raw_refresh_token,
         httponly=True,
-        secure=settings.COOKIE_SECURE,
+        secure=is_cookie_secure,
         samesite="lax",
         path="/api/v1/auth",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 86400
@@ -105,11 +105,12 @@ async def refresh(
     )
 
     # Set rotated HttpOnly cookie
+    is_cookie_secure = getattr(settings, 'COOKIE_SECURE', False) or settings.ENVIRONMENT in ("production", "staging")
     response.set_cookie(
         key="refresh_token",
         value=new_raw_refresh,
         httponly=True,
-        secure=settings.COOKIE_SECURE,
+        secure=is_cookie_secure,
         samesite="lax",
         path="/api/v1/auth",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 86400
