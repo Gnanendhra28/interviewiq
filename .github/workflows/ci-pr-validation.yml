@@ -73,7 +73,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install fastapi uvicorn pydantic pydantic-settings sqlalchemy asyncpg alembic redis google-genai httpx python-multipart passlib[bcrypt] python-jose[cryptography] pgvector pytest pytest-asyncio reportlab
+          pip install fastapi uvicorn pydantic pydantic-settings email-validator sqlalchemy asyncpg alembic redis google-genai httpx python-multipart passlib[bcrypt] python-jose[cryptography] pgvector pytest pytest-asyncio reportlab
 
       - name: Migration Downgrade & Upgrade Validation
         env:
