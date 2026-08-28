@@ -220,6 +220,7 @@ async def revoke_session(
 # --- Organization & Authorization Context Endpoints ---
 
 @org_router.get("/context", status_code=status.HTTP_200_OK)
+@router.get("/org-context", status_code=status.HTTP_200_OK)
 async def get_organization_context(
     ctx: AuthorizationContext = Depends(get_active_org_context)
 ):

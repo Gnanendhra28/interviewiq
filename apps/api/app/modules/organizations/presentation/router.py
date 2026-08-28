@@ -71,6 +71,29 @@ async def bootstrap_organization(
     return await use_case.execute(user=current_user, name=req.name, slug=req.slug, ip_address=ip_address)
 
 
+@org_router.get("/context", status_code=status.HTTP_200_OK)
+async def get_org_context_info(
+    ctx: AuthorizationContext = Depends(get_active_org_context)
+):
+    return {
+        "user_id": str(ctx.user.id),
+        "email": ctx.user.email,
+        "is_super_admin": ctx.user.is_super_admin,
+        "active_organization": {
+            "id": str(ctx.active_organization.id),
+            "name": ctx.active_organization.name,
+            "slug": ctx.active_organization.slug,
+        } if ctx.active_organization else None,
+        "role": {
+            "id": str(ctx.role.id),
+            "name": ctx.role.name,
+        } if ctx.role else None,
+        "permissions": list(ctx.permissions),
+        "is_candidate": ctx.candidate_profile is not None,
+        "candidate_profile_id": str(ctx.candidate_profile.id) if ctx.candidate_profile else None
+    }
+
+
 @org_router.get("/{organization_id}", status_code=status.HTTP_200_OK)
 async def get_organization(
     organization_id: uuid.UUID,
