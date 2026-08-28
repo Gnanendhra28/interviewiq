@@ -56,3 +56,5 @@ build/
 *.swo
 .terraform/
 .terraform.lock.hcl
+*.tfstate
+*.tfstate.*
