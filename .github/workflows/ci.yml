@@ -48,7 +48,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install .[dev]
+          pip install "email-validator>=2.1.0" .[dev]
 
       - name: Lint Code with Ruff
         run: |
