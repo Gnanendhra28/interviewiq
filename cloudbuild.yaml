@@ -1,0 +1,12 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-f', 'infrastructure/docker/Dockerfile.api', '-t', 'us-central1-docker.pkg.dev/interviewiq-staging/interviewiq-containers/api:latest', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-f', 'infrastructure/docker/Dockerfile.worker', '-t', 'us-central1-docker.pkg.dev/interviewiq-staging/interviewiq-containers/worker:latest', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-f', 'infrastructure/docker/Dockerfile.web', '-t', 'us-central1-docker.pkg.dev/interviewiq-staging/interviewiq-containers/web:latest', '.']
+
+images:
+  - 'us-central1-docker.pkg.dev/interviewiq-staging/interviewiq-containers/api:latest'
+  - 'us-central1-docker.pkg.dev/interviewiq-staging/interviewiq-containers/worker:latest'
+  - 'us-central1-docker.pkg.dev/interviewiq-staging/interviewiq-containers/web:latest'

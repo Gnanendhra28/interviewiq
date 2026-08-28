@@ -64,6 +64,7 @@ module "api" {
   project_id            = var.project_id
   environment           = "production"
   region                = var.region
+  container_image       = "us-central1-docker.pkg.dev/${var.project_id}/interviewiq-containers/api:latest"
   service_account_email = module.iam.api_sa_email
   db_url_secret_id      = module.secrets.db_url_secret_id
   jwt_secret_id         = module.secrets.jwt_secret_id
@@ -78,6 +79,7 @@ module "workers" {
   project_id            = var.project_id
   environment           = "production"
   region                = var.region
+  container_image       = "us-central1-docker.pkg.dev/${var.project_id}/interviewiq-containers/worker:latest"
   service_account_email = module.iam.worker_sa_email
   db_url_secret_id      = module.secrets.db_url_secret_id
   min_instances         = 2
@@ -87,11 +89,12 @@ module "workers" {
 }
 
 module "frontend" {
-  source      = "../../modules/frontend"
-  project_id  = var.project_id
-  environment = "production"
-  region      = var.region
-  api_url     = module.api.service_url
+  source          = "../../modules/frontend"
+  project_id      = var.project_id
+  environment     = "production"
+  region          = var.region
+  container_image = "us-central1-docker.pkg.dev/${var.project_id}/interviewiq-containers/web:latest"
+  api_url         = module.api.service_url
 }
 
 module "monitoring" {
