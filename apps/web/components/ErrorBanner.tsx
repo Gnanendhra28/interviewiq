@@ -1,16 +1,18 @@
 import React from 'react';
-import { AlertTriangle } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 
 export function ErrorBanner({ message, code, requestId }: { message: string; code?: string; requestId?: string }) {
   return (
-    <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-3 text-red-800 my-4">
-      <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-      <div>
-        <p className="font-semibold text-sm">{message}</p>
+    <div className="bg-rose-950/40 border border-rose-800/60 rounded-xl p-4 flex items-start space-x-3 text-rose-200 my-4 shadow-lg backdrop-blur-sm">
+      <div className="p-1.5 bg-rose-900/50 rounded-lg text-rose-400 flex-shrink-0 mt-0.5">
+        <AlertCircle className="w-5 h-5" />
+      </div>
+      <div className="space-y-1">
+        <h4 className="font-bold text-sm text-rose-100">{message}</h4>
         {(code || requestId) && (
-          <p className="text-xs text-red-600 mt-1 font-mono">
-            {code && <span>Code: {code} </span>}
-            {requestId && <span>(Request ID: {requestId})</span>}
+          <p className="text-xs text-rose-300/80 font-mono tracking-tight">
+            {code && <span>[Error Code: {code}] </span>}
+            {requestId && <span>(Req: {requestId})</span>}
           </p>
         )}
       </div>
