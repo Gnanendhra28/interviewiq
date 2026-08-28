@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY pyproject.toml .
 
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir fastapi uvicorn pydantic pydantic-settings sqlalchemy asyncpg alembic redis google-genai httpx python-multipart passlib[bcrypt] python-jose[cryptography] pgvector reportlab email-validator
+    pip install --no-cache-dir fastapi uvicorn pydantic pydantic-settings sqlalchemy asyncpg alembic redis google-genai httpx python-multipart passlib[bcrypt,argon2] argon2-cffi bcrypt python-jose[cryptography] pgvector reportlab email-validator
 
 FROM python:3.11-slim AS runner
 

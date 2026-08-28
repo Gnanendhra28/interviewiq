@@ -126,16 +126,21 @@ async def domain_exception_handler(request: Request, exc: DomainException):
 async def unhandled_exception_handler(request: Request, exc: Exception):
     req_id = get_current_request_id()
     logger.error(f"[UNHANDLED EXCEPTION] [{req_id}] {exc}", exc_info=True)
+    origin = request.headers.get("origin")
+    res_headers = {"X-Request-ID": req_id} if req_id else {}
+    if origin and ("run.app" in origin or "localhost" in origin or origin in settings.ALLOWED_ORIGINS):
+        res_headers["Access-Control-Allow-Origin"] = origin
+        res_headers["Access-Control-Allow-Credentials"] = "true"
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
             "error": {
                 "code": "INTERNAL_SERVER_ERROR",
-                "message": "An internal server error occurred. Please contact support.",
+                "message": f"An internal server error occurred: {str(exc)}",
                 "request_id": req_id
             }
         },
-        headers={"X-Request-ID": req_id} if req_id else None
+        headers=res_headers
     )
 
 

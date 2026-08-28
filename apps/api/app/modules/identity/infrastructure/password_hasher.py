@@ -1,17 +1,25 @@
 from passlib.context import CryptContext
+from apps.api.app.core.logging import logger
 
-# Argon2id password hashing context with bcrypt fallback
-pwd_context = CryptContext(
-    schemes=["argon2", "bcrypt"],
-    deprecated="auto",
-    argon2__memory_cost=65536,
-    argon2__time_cost=3,
-    argon2__parallelism=4,
-)
+try:
+    pwd_context = CryptContext(
+        schemes=["argon2", "bcrypt"],
+        deprecated="auto",
+        argon2__memory_cost=65536,
+        argon2__time_cost=3,
+        argon2__parallelism=4,
+    )
+    pwd_context.hash("test_init", scheme="argon2")
+except Exception as e:
+    logger.warning(f"Argon2 backend initialization failed ({e}). Falling back to Bcrypt scheme.")
+    pwd_context = CryptContext(
+        schemes=["bcrypt"],
+        deprecated="auto",
+    )
 
 
 class PasswordHasher:
-    """Production Password Hasher supporting Argon2id."""
+    """Production Password Hasher supporting Argon2id with Bcrypt fallback."""
 
     @staticmethod
     def hash_password(password: str) -> str:
@@ -26,4 +34,7 @@ class PasswordHasher:
 
     @staticmethod
     def needs_rehash(hashed_password: str) -> bool:
-        return pwd_context.needs_update(hashed_password)
+        try:
+            return pwd_context.needs_update(hashed_password)
+        except Exception:
+            return False
