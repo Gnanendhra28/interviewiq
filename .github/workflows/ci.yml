@@ -54,6 +54,12 @@ jobs:
         run: |
           ruff check apps/api workers
 
+      - name: Run Database Migrations
+        env:
+          DATABASE_URL: postgresql+asyncpg://interviewiq:interviewiq_dev_pass@localhost:5432/interviewiq_db
+        run: |
+          PYTHONPATH=. python3 -m alembic -c apps/api/alembic.ini upgrade head
+
       - name: Run Pytest
         env:
           DATABASE_URL: postgresql+asyncpg://interviewiq:interviewiq_dev_pass@localhost:5432/interviewiq_db
