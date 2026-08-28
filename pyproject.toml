@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "interviewiq-monorepo"
 version = "0.1.0"
@@ -31,6 +35,11 @@ dev = [
     "mypy>=1.9.0",
 ]
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["apps*", "workers*"]
+exclude = ["infrastructure*", "docs*", "data*", "apps.web*"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"
@@ -46,7 +55,7 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 minversion = "8.0"
-addopts = "-ra -q --asyncio-mode=auto"
+addopts = "-ra -q --asyncio-mode=auto --import-mode=importlib"
 testpaths = [
     "apps/api/app/modules/*/tests",
     "workers/tests"

@@ -1,5 +1,6 @@
 import logging
 import sys
+
 from apps.api.app.core.config import settings
 
 

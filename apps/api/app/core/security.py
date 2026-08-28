@@ -1,11 +1,12 @@
 import hashlib
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any
-from jose import jwt, JWTError
+from typing import Any, Dict, Optional
+
+from jose import JWTError, jwt
 from passlib.context import CryptContext
+
 from apps.api.app.core.config import settings
 from apps.api.app.core.exceptions import UnauthorizedException
-
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

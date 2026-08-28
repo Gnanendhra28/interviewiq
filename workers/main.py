@@ -1,6 +1,6 @@
 import asyncio
-import time
-from apps.api.app.core.logging import setup_logging, logger
+
+from apps.api.app.core.logging import logger, setup_logging
 from workers.tasks import process_queued_jobs
 
 setup_logging()

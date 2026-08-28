@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
+
 from pydantic import BaseModel
+
 from apps.api.app.core.config import settings
 from apps.api.app.core.exceptions import AIProviderException
 

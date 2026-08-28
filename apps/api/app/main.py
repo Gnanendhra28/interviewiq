@@ -1,22 +1,25 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
 from apps.api.app.core.config import settings
-from apps.api.app.core.logging import setup_logging, logger
 from apps.api.app.core.exceptions import InterviewIQException
+from apps.api.app.core.logging import logger, setup_logging
+from apps.api.app.modules.audit_logging.api.router import router as audit_logging_router
+from apps.api.app.modules.background_jobs.api.router import router as background_jobs_router
+from apps.api.app.modules.candidates.api.router import router as candidates_router
 
 # Import 12 Bounded Context Module Routers
 from apps.api.app.modules.identity.api.router import router as identity_router
-from apps.api.app.modules.organizations.api.router import router as organizations_router
-from apps.api.app.modules.candidates.api.router import router as candidates_router
-from apps.api.app.modules.resumes.api.router import router as resumes_router
+from apps.api.app.modules.interview_intelligence.api.router import (
+    router as interview_intelligence_router,
+)
+from apps.api.app.modules.interviews.api.router import router as interviews_router
 from apps.api.app.modules.job_roles.api.router import router as job_roles_router
 from apps.api.app.modules.knowledge_rag.api.router import router as knowledge_rag_router
-from apps.api.app.modules.interviews.api.router import router as interviews_router
-from apps.api.app.modules.interview_intelligence.api.router import router as interview_intelligence_router
+from apps.api.app.modules.organizations.api.router import router as organizations_router
 from apps.api.app.modules.reports.api.router import router as reports_router
-from apps.api.app.modules.background_jobs.api.router import router as background_jobs_router
-from apps.api.app.modules.audit_logging.api.router import router as audit_logging_router
+from apps.api.app.modules.resumes.api.router import router as resumes_router
 from apps.api.app.modules.shared.api.router import router as shared_router
 
 setup_logging()
