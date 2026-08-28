@@ -21,19 +21,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('interviewiq_user');
-      if (stored) {
-        try {
-          return JSON.parse(stored);
-        } catch (e) {
-          // Ignore parse errors
-        }
-      }
-    }
-    return null;
-  });
+  const [user, setUser] = useState<User | null>(null);
 
   const [activeOrganization, setActiveOrganization] = useState<Organization | null>(null);
   const [memberships, setMemberships] = useState<Membership[]>([]);
@@ -110,6 +98,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('interviewiq_user');
+      if (stored) {
+        try {
+          setUser(JSON.parse(stored));
+        } catch (e) {}
+      }
+    }
     refreshSession();
   }, []);
 

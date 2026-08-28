@@ -94,6 +94,97 @@ async def get_org_context_info(
     }
 
 
+@org_router.get("/memberships", status_code=status.HTTP_200_OK)
+async def list_user_memberships(
+    current_user: UserORM = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    from sqlalchemy import select
+    from apps.api.app.modules.organizations.infrastructure.orm import OrganizationMembershipORM, OrganizationORM, RoleORM
+
+    stmt = (
+        select(OrganizationMembershipORM, OrganizationORM, RoleORM)
+        .join(OrganizationORM, OrganizationMembershipORM.organization_id == OrganizationORM.id)
+        .outerjoin(RoleORM, OrganizationMembershipORM.role_id == RoleORM.id)
+        .where(
+            OrganizationMembershipORM.user_id == current_user.id,
+            OrganizationMembershipORM.status == "ACTIVE"
+        )
+    )
+    result = await db.execute(stmt)
+    rows = result.all()
+
+    return [
+        {
+            "id": str(mem.id),
+            "user_id": str(mem.user_id),
+            "organization_id": str(mem.organization_id),
+            "role_id": str(mem.role_id) if mem.role_id else None,
+            "status": mem.status,
+            "organization": {
+                "id": str(org.id),
+                "name": org.name,
+                "slug": org.slug,
+                "account_status": org.account_status,
+            } if org else None,
+            "role": {
+                "id": str(role.id),
+                "name": role.name,
+            } if role else None
+        }
+        for mem, org, role in rows
+    ]
+
+
+@org_router.post("/bootstrap", status_code=status.HTTP_201_CREATED)
+async def bootstrap_organization_alias(
+    req: BootstrapOrgRequest,
+    request: Request,
+    current_user: UserORM = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    ip_address = request.client.host if request.client else None
+    use_case = BootstrapOrganizationUseCase(db)
+    return await use_case.execute(user=current_user, name=req.name, slug=req.slug, ip_address=ip_address)
+
+
+@org_router.post("/{organization_id}/switch", status_code=status.HTTP_200_OK)
+async def switch_active_organization(
+    organization_id: uuid.UUID,
+    current_user: UserORM = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    from sqlalchemy import select
+    from apps.api.app.core.exceptions import DomainException
+    from apps.api.app.modules.organizations.infrastructure.orm import OrganizationMembershipORM, OrganizationORM
+
+    stmt = (
+        select(OrganizationMembershipORM, OrganizationORM)
+        .join(OrganizationORM, OrganizationMembershipORM.organization_id == OrganizationORM.id)
+        .where(
+            OrganizationMembershipORM.user_id == current_user.id,
+            OrganizationMembershipORM.organization_id == organization_id,
+            OrganizationMembershipORM.status == "ACTIVE"
+        )
+    )
+    result = await db.execute(stmt)
+    row = result.first()
+    if not row:
+        raise DomainException("Membership not found in requested organization", code="AUTH_ORGANIZATION_ACCESS_DENIED")
+
+    mem, org = row
+    return {
+        "id": str(mem.id),
+        "user_id": str(mem.user_id),
+        "organization_id": str(mem.organization_id),
+        "organization": {
+            "id": str(org.id),
+            "name": org.name,
+            "slug": org.slug,
+        } if org else None
+    }
+
+
 @org_router.get("/{organization_id}", status_code=status.HTTP_200_OK)
 async def get_organization(
     organization_id: uuid.UUID,
