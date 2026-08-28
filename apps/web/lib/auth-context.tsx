@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, Organization, Membership } from '../types';
 import { authService } from '../services/auth-service';
 import { organizationService } from '../services/organization-service';
-import { setAccessToken, setActiveOrganizationId, getAccessToken, getActiveOrganizationId } from './api-client';
+import { setAccessToken, setActiveOrganizationId, getAccessToken, getActiveOrganizationId, getApiBaseUrl } from './api-client';
 
 interface AuthContextType {
   user: User | null;
@@ -21,18 +21,75 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('interviewiq_user');
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (e) {
+          // Ignore parse errors
+        }
+      }
+    }
+    return null;
+  });
+
   const [activeOrganization, setActiveOrganization] = useState<Organization | null>(null);
   const [memberships, setMemberships] = useState<Membership[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const refreshSession = async () => {
     try {
-      const token = getAccessToken();
+      let token = getAccessToken();
+
+      // If no token in memory/localStorage, attempt silent cookie refresh
+      if (!token && typeof window !== 'undefined') {
+        try {
+          const baseUrl = getApiBaseUrl();
+          const refreshRes = await fetch(`${baseUrl}/auth/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+          });
+          if (refreshRes.ok) {
+            const refreshData = await refreshRes.json();
+            if (refreshData.access_token) {
+              setAccessToken(refreshData.access_token);
+              token = refreshData.access_token;
+            }
+          }
+        } catch (e) {
+          // Silent refresh failed
+        }
+      }
+
       if (!token) {
+        setUser(null);
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('interviewiq_user');
+        }
         setIsLoading(false);
         return;
       }
+
+      // Fetch user profile to verify token & restore user context
+      try {
+        const meRes = await authService.getCurrentUser();
+        if (meRes && meRes.user) {
+          setUser(meRes.user);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('interviewiq_user', JSON.stringify(meRes.user));
+          }
+          if (meRes.active_organization) {
+            setActiveOrganization(meRes.active_organization);
+            setActiveOrganizationId(meRes.active_organization.id);
+          }
+        }
+      } catch (e) {
+        // me call failed
+      }
+
       const mems = await organizationService.listMemberships();
       setMemberships(mems);
       const activeOrgId = getActiveOrganizationId();
@@ -46,9 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setActiveOrganizationId(mems[0].organization_id);
       }
     } catch (e) {
-      setUser(null);
-      setAccessToken(null);
-      setActiveOrganizationId(null);
+      console.warn('Session refresh error:', e);
     } finally {
       setIsLoading(false);
     }
@@ -64,6 +119,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await authService.login(email, pass);
       setAccessToken(res.access_token);
       setUser(res.user);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('interviewiq_user', JSON.stringify(res.user));
+      }
       setMemberships(res.memberships || []);
       if (res.active_organization) {
         setActiveOrganization(res.active_organization);
@@ -89,6 +147,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setMemberships([]);
       setAccessToken(null);
       setActiveOrganizationId(null);
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('interviewiq_user');
+      }
       setIsLoading(false);
     }
   };

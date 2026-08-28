@@ -217,6 +217,35 @@ async def revoke_session(
     return await use_case.revoke_specific_session(current_user.id, session_id)
 
 
+@router.get("/me", status_code=status.HTTP_200_OK)
+async def get_current_user_profile(
+    current_user: UserORM = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    from apps.api.app.core.authorization.context import AuthorizationService
+    auth_service = AuthorizationService(db)
+    ctx = await auth_service.resolve_authorization_context(current_user)
+
+    return {
+        "user": {
+            "id": str(current_user.id),
+            "email": current_user.email,
+            "is_super_admin": current_user.is_super_admin,
+            "account_status": current_user.account_status,
+        },
+        "active_organization": {
+            "id": str(ctx.active_organization.id),
+            "name": ctx.active_organization.name,
+            "slug": ctx.active_organization.slug,
+        } if ctx.active_organization else None,
+        "role": {
+            "id": str(ctx.role.id),
+            "name": ctx.role.name,
+        } if ctx.role else None,
+        "permissions": list(ctx.permissions),
+    }
+
+
 # --- Organization & Authorization Context Endpoints ---
 
 @org_router.get("/context", status_code=status.HTTP_200_OK)

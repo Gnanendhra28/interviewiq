@@ -20,8 +20,10 @@ export function setAccessToken(token: string | null) {
   accessTokenMemory = token;
   if (typeof window !== 'undefined') {
     if (token) {
+      localStorage.setItem('access_token', token);
       sessionStorage.setItem('access_token', token);
     } else {
+      localStorage.removeItem('access_token');
       sessionStorage.removeItem('access_token');
     }
   }
@@ -30,7 +32,7 @@ export function setAccessToken(token: string | null) {
 export function getAccessToken(): string | null {
   if (accessTokenMemory) return accessTokenMemory;
   if (typeof window !== 'undefined') {
-    accessTokenMemory = sessionStorage.getItem('access_token');
+    accessTokenMemory = localStorage.getItem('access_token') || sessionStorage.getItem('access_token');
   }
   return accessTokenMemory;
 }
@@ -39,8 +41,10 @@ export function setActiveOrganizationId(orgId: string | null) {
   activeOrganizationIdMemory = orgId;
   if (typeof window !== 'undefined') {
     if (orgId) {
+      localStorage.setItem('active_org_id', orgId);
       sessionStorage.setItem('active_org_id', orgId);
     } else {
+      localStorage.removeItem('active_org_id');
       sessionStorage.removeItem('active_org_id');
     }
   }
@@ -49,7 +53,7 @@ export function setActiveOrganizationId(orgId: string | null) {
 export function getActiveOrganizationId(): string | null {
   if (activeOrganizationIdMemory) return activeOrganizationIdMemory;
   if (typeof window !== 'undefined') {
-    activeOrganizationIdMemory = sessionStorage.getItem('active_org_id');
+    activeOrganizationIdMemory = localStorage.getItem('active_org_id') || sessionStorage.getItem('active_org_id');
   }
   return activeOrganizationIdMemory;
 }

@@ -16,6 +16,10 @@ export const authService = {
     });
   },
 
+  async getCurrentUser(): Promise<any> {
+    return fetchApi<any>('/auth/me');
+  },
+
   async logout(): Promise<void> {
     await fetchApi<{ status: string }>('/auth/logout', { method: 'POST' });
   },
