@@ -14,16 +14,16 @@ InterviewIQ is a production-grade, AI-powered adaptive technical interview platf
 ## Documentation
 
 Full architectural specifications and Architecture Decision Records (ADRs) are located in `docs/`:
-- [System Overview](file:///Users/gnanendhrajoy/.gemini/antigravity/scratch/interviewiq/docs/architecture/system-overview.md)
-- [Domain Boundaries](file:///Users/gnanendhrajoy/.gemini/antigravity/scratch/interviewiq/docs/architecture/domain-boundaries.md)
-- [Data Flow Specification](file:///Users/gnanendhrajoy/.gemini/antigravity/scratch/interviewiq/docs/architecture/data-flow.md)
-- [RAG Architecture](file:///Users/gnanendhrajoy/.gemini/antigravity/scratch/interviewiq/docs/architecture/rag-architecture.md)
-- [Interview Lifecycle State Machine](file:///Users/gnanendhrajoy/.gemini/antigravity/scratch/interviewiq/docs/architecture/interview-lifecycle.md)
-- [ADR 001: Modular Monolith](file:///Users/gnanendhrajoy/.gemini/antigravity/scratch/interviewiq/docs/adr/001-modular-monolith.md)
-- [ADR 002: PostgreSQL + pgvector](file:///Users/gnanendhrajoy/.gemini/antigravity/scratch/interviewiq/docs/adr/002-postgresql-pgvector.md)
-- [ADR 003: Gemini AI Provider Abstraction](file:///Users/gnanendhrajoy/.gemini/antigravity/scratch/interviewiq/docs/adr/003-gemini-ai-provider.md)
-- [ADR 004: Background Processing](file:///Users/gnanendhrajoy/.gemini/antigravity/scratch/interviewiq/docs/adr/004-background-processing.md)
-- [ADR 005: Authentication & Authorization](file:///Users/gnanendhrajoy/.gemini/antigravity/scratch/interviewiq/docs/adr/005-authentication-and-authorization.md)
+- [System Overview](file:///Users/gnanendhrajoy/Desktop/interviewiq/docs/architecture/system-overview.md)
+- [Domain Boundaries](file:///Users/gnanendhrajoy/Desktop/interviewiq/docs/architecture/domain-boundaries.md)
+- [Data Flow Specification](file:///Users/gnanendhrajoy/Desktop/interviewiq/docs/architecture/data-flow.md)
+- [RAG Architecture](file:///Users/gnanendhrajoy/Desktop/interviewiq/docs/architecture/rag-architecture.md)
+- [Interview Lifecycle State Machine](file:///Users/gnanendhrajoy/Desktop/interviewiq/docs/architecture/interview-lifecycle.md)
+- [ADR 001: Modular Monolith](file:///Users/gnanendhrajoy/Desktop/interviewiq/docs/adr/001-modular-monolith.md)
+- [ADR 002: PostgreSQL + pgvector](file:///Users/gnanendhrajoy/Desktop/interviewiq/docs/adr/002-postgresql-pgvector.md)
+- [ADR 003: Gemini AI Provider Abstraction](file:///Users/gnanendhrajoy/Desktop/interviewiq/docs/adr/003-gemini-ai-provider.md)
+- [ADR 004: Background Processing](file:///Users/gnanendhrajoy/Desktop/interviewiq/docs/adr/004-background-processing.md)
+- [ADR 005: Authentication & Authorization](file:///Users/gnanendhrajoy/Desktop/interviewiq/docs/adr/005-authentication-and-authorization.md)
 
 ## Quick Start (Docker Compose)
 

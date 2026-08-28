@@ -1,0 +1,61 @@
+name: Staging Continuous Deployment
+
+on:
+  push:
+    branches: [ develop, staging ]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy-staging:
+    name: Build, Migrate & Deploy Staging
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_STAGING_DEPLOY_SA }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build & Push Container Artifacts
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+          IMAGE_TAG=${{ github.sha }}
+          
+          docker build -f infrastructure/docker/Dockerfile.api -t us-central1-docker.pkg.dev/${{ secrets.GCP_STAGING_PROJECT_ID }}/interviewiq-repo/api:$IMAGE_TAG .
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_STAGING_PROJECT_ID }}/interviewiq-repo/api:$IMAGE_TAG
+          
+          docker build -f infrastructure/docker/Dockerfile.worker -t us-central1-docker.pkg.dev/${{ secrets.GCP_STAGING_PROJECT_ID }}/interviewiq-repo/worker:$IMAGE_TAG .
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_STAGING_PROJECT_ID }}/interviewiq-repo/worker:$IMAGE_TAG
+
+      - name: Execute Alembic Database Migration Job
+        run: |
+          bash scripts/run-migrations.sh
+
+      - name: Deploy Cloud Run API Service
+        run: |
+          gcloud run deploy interviewiq-staging-api \
+            --image us-central1-docker.pkg.dev/${{ secrets.GCP_STAGING_PROJECT_ID }}/interviewiq-repo/api:${{ github.sha }} \
+            --region us-central1 \
+            --platform managed \
+            --quiet
+
+      - name: Deploy Cloud Run Worker Service
+        run: |
+          gcloud run deploy interviewiq-staging-worker \
+            --image us-central1-docker.pkg.dev/${{ secrets.GCP_STAGING_PROJECT_ID }}/interviewiq-repo/worker:${{ github.sha }} \
+            --region us-central1 \
+            --platform managed \
+            --quiet
+
+      - name: Run Staging Smoke Tests
+        run: |
+          python3 -m pytest tests/smoke/test_production_smoke.py -v

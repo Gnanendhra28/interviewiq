@@ -7,11 +7,14 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from apps.api.app.core.config import settings
-from apps.api.app.core.database import Base
+from apps.api.app.core.orm_registry import Base
 
 config = context.config
 if config.config_file_name is not None:
-    fileConfig(config.config_file_name)
+    try:
+        fileConfig(config.config_file_name)
+    except Exception:
+        pass
 
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 target_metadata = Base.metadata

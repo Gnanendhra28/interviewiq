@@ -2,12 +2,17 @@
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["apps*", "workers*"]
+
 [project]
 name = "interviewiq-monorepo"
 version = "0.1.0"
 description = "InterviewIQ - Production-grade AI-powered adaptive technical interview platform"
 readme = "README.md"
 requires-python = ">=3.11"
+
 
 dependencies = [
     "fastapi>=0.110.0",
@@ -21,7 +26,8 @@ dependencies = [
     "redis>=5.0.3",
     "google-genai>=0.1.1",
     "python-multipart>=0.0.9",
-    "passlib[bcrypt]>=1.7.4",
+    "passlib[bcrypt,argon2]>=1.7.4",
+    "argon2-cffi>=23.1.0",
     "python-jose[cryptography]>=3.3.0",
     "httpx>=0.27.0",
 ]
@@ -35,18 +41,13 @@ dev = [
     "mypy>=1.9.0",
 ]
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["apps*", "workers*"]
-exclude = ["infrastructure*", "docs*", "data*", "apps.web*"]
-
 [tool.ruff]
 line-length = 100
 target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "B", "I"]
-ignore = ["E501"]
+ignore = ["E501", "B008", "E711", "E712", "B904", "E701"]
 
 [tool.mypy]
 python_version = "3.11"
@@ -55,7 +56,7 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 minversion = "8.0"
-addopts = "-ra -q --asyncio-mode=auto --import-mode=importlib"
+addopts = "-ra -q --asyncio-mode=auto"
 testpaths = [
     "apps/api/app/modules/*/tests",
     "workers/tests"

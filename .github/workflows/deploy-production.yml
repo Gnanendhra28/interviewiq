@@ -1,0 +1,62 @@
+name: Production Release Deployment
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy-production:
+    name: Production Controlled Release
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Production Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_PROD_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_PROD_DEPLOY_SA }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build & Push Production Containers
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+          TAG=${GITHUB_REF_NAME}
+          
+          docker build -f infrastructure/docker/Dockerfile.api -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROD_PROJECT_ID }}/interviewiq-prod-repo/api:$TAG .
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROD_PROJECT_ID }}/interviewiq-prod-repo/api:$TAG
+          
+          docker build -f infrastructure/docker/Dockerfile.worker -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROD_PROJECT_ID }}/interviewiq-prod-repo/worker:$TAG .
+          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROD_PROJECT_ID }}/interviewiq-prod-repo/worker:$TAG
+
+      - name: Gated Database Migration Execution
+        run: |
+          bash scripts/run-migrations.sh
+
+      - name: Production Cloud Run API Rolling Rollout
+        run: |
+          gcloud run deploy interviewiq-prod-api \
+            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROD_PROJECT_ID }}/interviewiq-prod-repo/api:${GITHUB_REF_NAME} \
+            --region us-central1 \
+            --platform managed \
+            --quiet
+
+      - name: Production Cloud Run Worker Rolling Rollout
+        run: |
+          gcloud run deploy interviewiq-prod-worker \
+            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROD_PROJECT_ID }}/interviewiq-prod-repo/worker:${GITHUB_REF_NAME} \
+            --region us-central1 \
+            --platform managed \
+            --quiet
+
+      - name: Execute Production Post-Deploy Smoke Verification
+        run: |
+          python3 -m pytest tests/smoke/test_production_smoke.py -v

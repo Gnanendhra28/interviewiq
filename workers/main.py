@@ -1,7 +1,7 @@
 import asyncio
 
 from apps.api.app.core.logging import logger, setup_logging
-from workers.tasks import process_queued_jobs
+from workers.job_runner import process_queued_jobs
 
 setup_logging()
 

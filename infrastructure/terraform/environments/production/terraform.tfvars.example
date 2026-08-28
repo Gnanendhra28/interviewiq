@@ -1,0 +1,4 @@
+project_id     = "interviewiq-prod-987654"
+region         = "us-central1"
+gemini_api_key = "AIzaSy_YOUR_PROD_KEY_HERE"
+alert_email    = "ops-alerts@interviewiq.ai"

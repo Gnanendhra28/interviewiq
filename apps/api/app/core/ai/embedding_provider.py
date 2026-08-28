@@ -39,20 +39,18 @@ class EmbeddingProvider(ABC):
     def validate_schema_alignment(self, result: EmbeddingResult) -> None:
         """
         Validate that generated vector output metadata aligns with configured schema rules.
-        Prevents silent misalignment between app config & pgvector column dimensions.
+        Prevents silent misalignment between application config and database pgvector column dimensions.
         """
         if result.metadata.dimension != settings.EMBEDDING_DIMENSION:
             raise AIProviderException(
-                f"Vector dimension mismatch! Provider generated "
-                f"{result.metadata.dimension} dimensions, but DB schema expects "
-                f"EMBEDDING_DIMENSION={settings.EMBEDDING_DIMENSION}. Changing vector "
-                f"dimensions requires an explicit DB migration & re-embedding cutover.",
-                provider=result.metadata.provider,
+                f"Vector dimension mismatch! Provider generated {result.metadata.dimension} dimensions, "
+                f"but DB schema expects EMBEDDING_DIMENSION={settings.EMBEDDING_DIMENSION}. "
+                "Changing vector dimensions requires an explicit database migration & re-embedding cutover.",
+                provider=result.metadata.provider
             )
         if result.metadata.model != settings.EMBEDDING_MODEL:
             raise AIProviderException(
-                f"Embedding model mismatch! Provider output model "
-                f"'{result.metadata.model}' does not match configured "
-                f"EMBEDDING_MODEL='{settings.EMBEDDING_MODEL}'.",
-                provider=result.metadata.provider,
+                f"Embedding model mismatch! Provider output model '{result.metadata.model}' does not match "
+                f"configured EMBEDDING_MODEL='{settings.EMBEDDING_MODEL}'.",
+                provider=result.metadata.provider
             )

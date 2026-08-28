@@ -1,21 +1,20 @@
+import React from 'react';
 import './globals.css';
-import Providers from '@/lib/providers';
+import { Providers } from '@/lib/providers';
+import { Navbar } from '@/components/Navbar';
 
 export const metadata = {
-  title: 'InterviewIQ | AI-Powered Adaptive Technical Interviews',
-  description: 'Enterprise production-grade technical interview platform grounded in role-specific knowledge bases and adaptive AI scoring.',
+  title: 'InterviewIQ — AI Adaptive Interview & Recruiter Command Center',
+  description: 'Enterprise AI Technical Interview & Recruiter Decision Support Platform',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-slate-950 text-slate-100 font-sans antialiased">
+      <body className="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
         <Providers>
-          {children}
+          <Navbar />
+          <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">{children}</main>
         </Providers>
       </body>
     </html>

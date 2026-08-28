@@ -1,3 +1,3 @@
 -- Initial PostgreSQL setup script for InterviewIQ
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Native UUID generation (gen_random_uuid()) is built-in to PostgreSQL 13+
 CREATE EXTENSION IF NOT EXISTS "vector";

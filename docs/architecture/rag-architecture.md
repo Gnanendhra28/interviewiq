@@ -10,7 +10,7 @@ The initial production default embedding model is:
 - **`EMBEDDING_DIMENSION`**: `768`
 - **`EMBEDDING_VERSION`**: `v1`
 
-Vector embedding generation is governed by an abstract `EmbeddingProvider` interface ([`apps/api/app/core/ai/embedding_provider.py`](file:///Users/gnanendhrajoy/.gemini/antigravity/scratch/interviewiq/apps/api/app/core/ai/embedding_provider.py)), which validates that output vector dimensions match database schema expectations (`EMBEDDING_DIMENSION`).
+Vector embedding generation is governed by an abstract `EmbeddingProvider` interface ([`apps/api/app/core/ai/embedding_provider.py`](file:///Users/gnanendhrajoy/Desktop/interviewiq/apps/api/app/core/ai/embedding_provider.py)), which validates that output vector dimensions match database schema expectations (`EMBEDDING_DIMENSION`).
 
 ```mermaid
 flowchart TD

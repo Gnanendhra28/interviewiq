@@ -1,0 +1,4 @@
+project_id     = "interviewiq-staging-123456"
+region         = "us-central1"
+gemini_api_key = "AIzaSy_YOUR_STAGING_KEY_HERE"
+alert_email    = "staging-alerts@interviewiq.ai"
