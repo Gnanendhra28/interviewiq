@@ -74,19 +74,19 @@ export default function CandidateDetailPage() {
   if (!cand) return <ErrorBanner message="Candidate profile not found." />;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header Profile Section */}
-      <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="glass-panel p-6 rounded-xl border border-slate-800/80 shadow-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center space-x-4">
-          <div className="w-14 h-14 bg-indigo-100 text-indigo-700 font-bold text-xl rounded-full flex items-center justify-center">
+          <div className="w-14 h-14 bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 font-bold text-xl rounded-full flex items-center justify-center shadow-lg">
             {cand.first_name[0]}
             {cand.last_name[0]}
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-extrabold text-white">
               {cand.first_name} {cand.last_name}
             </h1>
-            <p className="text-sm text-slate-500">{cand.headline || 'Software Engineer Candidate'}</p>
+            <p className="text-sm text-slate-300">{cand.headline || 'Software Engineer Candidate'}</p>
             <p className="text-xs text-slate-400 mt-1">{cand.email}</p>
           </div>
         </div>
@@ -95,10 +95,10 @@ export default function CandidateDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Skills & Experience */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Skills Breakdown with Provenance Indicators */}
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-slate-900 flex items-center space-x-2">
-              <Sparkles className="w-5 h-5 text-indigo-600" />
+          {/* Skills Breakdown */}
+          <div className="glass-panel p-6 rounded-xl border border-slate-800/80 shadow-2xl space-y-4">
+            <h2 className="text-base font-bold text-white flex items-center space-x-2">
+              <Sparkles className="w-5 h-5 text-indigo-400" />
               <span>Extracted & Manual Skills</span>
             </h2>
 
@@ -106,38 +106,38 @@ export default function CandidateDetailPage() {
               {(cand.skills || []).map((sk) => (
                 <span
                   key={sk.id}
-                  className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
-                    sk.source === 'RESUME_AI' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-slate-100 text-slate-700'
+                  className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border ${
+                    sk.source === 'RESUME_AI' ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' : 'bg-slate-800 text-slate-300 border-slate-700/60'
                   }`}
                 >
                   <span>{sk.skill_name}</span>
                   <span className="text-[10px] uppercase tracking-wider font-bold opacity-75">({sk.source})</span>
                 </span>
               ))}
-              {(cand.skills || []).length === 0 && <p className="text-sm text-slate-500 py-2">No skills recorded yet.</p>}
+              {(cand.skills || []).length === 0 && <p className="text-sm text-slate-400 py-2">No skills recorded yet.</p>}
             </div>
           </div>
 
           {/* Resume Upload & Processing Status */}
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-slate-900 flex items-center space-x-2">
-              <FileText className="w-5 h-5 text-indigo-600" />
+          <div className="glass-panel p-6 rounded-xl border border-slate-800/80 shadow-2xl space-y-4">
+            <h2 className="text-base font-bold text-white flex items-center space-x-2">
+              <FileText className="w-5 h-5 text-indigo-400" />
               <span>Resume Upload & AI Parsing</span>
             </h2>
 
-            {uploadStatusMsg && <div className="p-3 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg text-xs">{uploadStatusMsg}</div>}
+            {uploadStatusMsg && <div className="p-3 bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 rounded-lg text-xs">{uploadStatusMsg}</div>}
 
             <form onSubmit={handleFileUpload} className="flex items-center space-x-3">
               <input
                 type="file"
                 accept=".pdf,.docx"
                 onChange={(e) => setSelectedFile(e.target.files ? e.target.files[0] : null)}
-                className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                className="text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700 cursor-pointer"
               />
               <button
                 type="submit"
                 disabled={!selectedFile || uploadMutation.isPending}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm transition disabled:opacity-50 flex items-center space-x-1.5"
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition disabled:opacity-50 flex items-center space-x-1.5 shadow-lg shadow-indigo-600/30"
               >
                 <Upload className="w-4 h-4" />
                 <span>Upload</span>
@@ -146,17 +146,17 @@ export default function CandidateDetailPage() {
           </div>
 
           {/* Candidate Timeline Event Stream */}
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-slate-900 flex items-center space-x-2">
-              <History className="w-5 h-5 text-indigo-600" />
+          <div className="glass-panel p-6 rounded-xl border border-slate-800/80 shadow-2xl space-y-4">
+            <h2 className="text-base font-bold text-white flex items-center space-x-2">
+              <History className="w-5 h-5 text-indigo-400" />
               <span>Candidate Timeline</span>
             </h2>
 
             <div className="space-y-3">
               {(timeline || []).map((evt, idx) => (
-                <div key={idx} className="border-l-2 border-indigo-200 pl-4 py-1 text-xs space-y-1">
-                  <div className="font-bold text-slate-800">{evt.event_type}</div>
-                  <div className="text-slate-600">{evt.description}</div>
+                <div key={idx} className="border-l-2 border-indigo-500/60 pl-4 py-1 text-xs space-y-1">
+                  <div className="font-bold text-white">{evt.event_type}</div>
+                  <div className="text-slate-300">{evt.description}</div>
                   <div className="text-slate-400">{new Date(evt.timestamp).toLocaleString()}</div>
                 </div>
               ))}
@@ -166,40 +166,40 @@ export default function CandidateDetailPage() {
 
         {/* Right Column: Human Decision Management */}
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-            <h2 className="text-base font-bold text-slate-900 flex items-center space-x-2">
-              <ShieldCheck className="w-5 h-5 text-emerald-600" />
+          <div className="glass-panel p-6 rounded-xl border border-slate-800/80 shadow-2xl space-y-4">
+            <h2 className="text-base font-bold text-white flex items-center space-x-2">
+              <ShieldCheck className="w-5 h-5 text-emerald-400" />
               <span>Record Human Hiring Decision</span>
             </h2>
 
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-400">
               AI hiring signals are strictly decision support. Human recruiters must record final hiring authority decisions.
             </p>
 
             {latestInterview ? (
               <div className="space-y-4 pt-2">
                 <div>
-                  <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Decision Status</label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Decision Status</label>
                   <select
                     value={decisionStatus}
                     onChange={(e) => setDecisionStatus(e.target.value as HiringDecisionStatus)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white"
+                    className="w-full px-3 py-2 border border-slate-800 rounded-lg text-xs bg-slate-950 text-slate-200 focus:outline-none focus:border-indigo-500"
                   >
-                    <option value="SHORTLISTED">Shortlisted</option>
-                    <option value="HIRED">Hired</option>
-                    <option value="REJECTED">Rejected</option>
-                    <option value="ON_HOLD">On Hold</option>
+                    <option value="SHORTLISTED" className="bg-slate-900 text-slate-200">Shortlisted</option>
+                    <option value="HIRED" className="bg-slate-900 text-slate-200">Hired</option>
+                    <option value="REJECTED" className="bg-slate-900 text-slate-200">Rejected</option>
+                    <option value="ON_HOLD" className="bg-slate-900 text-slate-200">On Hold</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase text-slate-500 mb-1">Recruiter Rationale</label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Recruiter Rationale</label>
                   <textarea
                     rows={3}
                     value={rationaleText}
                     onChange={(e) => setRationaleText(e.target.value)}
                     placeholder="Enter explicit recruiter evaluation notes..."
-                    className="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="w-full p-2.5 bg-slate-950 border border-slate-800 text-slate-100 rounded-lg text-xs focus:outline-none focus:border-indigo-500"
                   />
                 </div>
 
@@ -212,13 +212,13 @@ export default function CandidateDetailPage() {
                     })
                   }
                   disabled={decisionMutation.isPending}
-                  className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg text-sm transition disabled:opacity-50"
+                  className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition disabled:opacity-50 shadow-lg shadow-emerald-600/30"
                 >
                   Save Human Decision
                 </button>
               </div>
             ) : (
-              <p className="text-xs text-amber-700 bg-amber-50 p-3 rounded-lg">
+              <p className="text-xs text-amber-300 bg-amber-500/20 border border-amber-500/30 p-3 rounded-lg">
                 No active interview session found for this candidate. Create an interview first to record hiring decisions.
               </p>
             )}

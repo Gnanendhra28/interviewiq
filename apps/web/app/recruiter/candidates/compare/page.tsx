@@ -27,43 +27,43 @@ function CompareCandidatesContent() {
   if (error) return <ErrorBanner message={(error as Error).message} />;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 flex items-center space-x-2">
-          <GitCompare className="w-6 h-6 text-indigo-600" />
+    <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="border-b border-slate-800/80 pb-6">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center space-x-2">
+          <GitCompare className="w-6 h-6 text-indigo-400" />
           <span>Candidate Comparison Matrix</span>
         </h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-xs sm:text-sm text-slate-400 mt-1">
           Side-by-side score breakdown, requirement scorecards, and hiring decision status for up to 5 candidates.
         </p>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-x-auto">
-        <table className="w-full text-left text-sm text-slate-700">
-          <thead className="bg-slate-50 border-b border-slate-200">
+      <div className="glass-panel border border-slate-800/80 rounded-xl shadow-2xl overflow-x-auto">
+        <table className="w-full text-left text-xs text-slate-300">
+          <thead className="bg-slate-900/90 border-b border-slate-800 text-[11px] uppercase tracking-wider font-semibold text-slate-400">
             <tr>
-              <th className="p-4 font-semibold text-slate-500 min-w-[200px]">Metric / Candidate</th>
+              <th className="p-4 min-w-[200px]">Metric / Candidate</th>
               {(data?.candidates || []).map((cand) => (
-                <th key={cand.candidate_id} className="p-4 font-bold text-slate-900 min-w-[220px]">
+                <th key={cand.candidate_id} className="p-4 font-bold text-white min-w-[220px]">
                   {cand.full_name}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-slate-800/60">
             <tr>
-              <td className="p-4 font-semibold text-slate-600 bg-slate-50/50">Overall Score</td>
+              <td className="p-4 font-semibold text-slate-400 bg-slate-900/40">Overall Score</td>
               {(data?.candidates || []).map((cand) => (
-                <td key={cand.candidate_id} className="p-4 font-bold text-indigo-700 text-base">
+                <td key={cand.candidate_id} className="p-4 font-bold text-indigo-300 text-base">
                   {cand.overall_score !== undefined && cand.overall_score !== null ? `${cand.overall_score.toFixed(2)} / 10.0` : 'N/A'}
                 </td>
               ))}
             </tr>
 
             <tr>
-              <td className="p-4 font-semibold text-slate-600 bg-slate-50/50">Technical Accuracy</td>
+              <td className="p-4 font-semibold text-slate-400 bg-slate-900/40">Technical Accuracy</td>
               {(data?.candidates || []).map((cand) => (
-                <td key={cand.candidate_id} className="p-4">
+                <td key={cand.candidate_id} className="p-4 text-slate-200">
                   {cand.technical_competency_score !== undefined && cand.technical_competency_score !== null
                     ? `${cand.technical_competency_score.toFixed(2)}`
                     : 'N/A'}
@@ -72,52 +72,52 @@ function CompareCandidatesContent() {
             </tr>
 
             <tr>
-              <td className="p-4 font-semibold text-slate-600 bg-slate-50/50">Reasoning Score</td>
+              <td className="p-4 font-semibold text-slate-400 bg-slate-900/40">Reasoning Score</td>
               {(data?.candidates || []).map((cand) => (
-                <td key={cand.candidate_id} className="p-4">
+                <td key={cand.candidate_id} className="p-4 text-slate-200">
                   {cand.reasoning_score !== undefined && cand.reasoning_score !== null ? `${cand.reasoning_score.toFixed(2)}` : 'N/A'}
                 </td>
               ))}
             </tr>
 
             <tr>
-              <td className="p-4 font-semibold text-slate-600 bg-slate-50/50">Communication Score</td>
+              <td className="p-4 font-semibold text-slate-400 bg-slate-900/40">Communication Score</td>
               {(data?.candidates || []).map((cand) => (
-                <td key={cand.candidate_id} className="p-4">
+                <td key={cand.candidate_id} className="p-4 text-slate-200">
                   {cand.communication_score !== undefined && cand.communication_score !== null ? `${cand.communication_score.toFixed(2)}` : 'N/A'}
                 </td>
               ))}
             </tr>
 
             <tr>
-              <td className="p-4 font-semibold text-slate-600 bg-slate-50/50">AI Hiring Signal</td>
+              <td className="p-4 font-semibold text-slate-400 bg-slate-900/40">AI Hiring Signal</td>
               {(data?.candidates || []).map((cand) => (
                 <td key={cand.candidate_id} className="p-4">
-                  <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 font-bold text-xs rounded-full">{cand.hiring_signal}</span>
+                  <span className="px-2.5 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-bold text-xs rounded-full">{cand.hiring_signal}</span>
                 </td>
               ))}
             </tr>
 
             <tr>
-              <td className="p-4 font-semibold text-slate-600 bg-slate-50/50">Human Decision</td>
+              <td className="p-4 font-semibold text-slate-400 bg-slate-900/40">Human Decision</td>
               {(data?.candidates || []).map((cand) => (
                 <td key={cand.candidate_id} className="p-4">
-                  <span className="px-2.5 py-1 bg-emerald-600 text-white font-bold text-xs rounded-full">{cand.human_decision}</span>
+                  <span className="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold text-xs rounded-full">{cand.human_decision}</span>
                 </td>
               ))}
             </tr>
 
             <tr>
-              <td className="p-4 font-semibold text-slate-600 bg-slate-50/50">Requirement Scorecards</td>
+              <td className="p-4 font-semibold text-slate-400 bg-slate-900/40">Requirement Scorecards</td>
               {(data?.candidates || []).map((cand) => (
                 <td key={cand.candidate_id} className="p-4 space-y-1.5 text-xs">
                   {(cand.requirement_scorecards || []).map((sc, idx) => (
-                    <div key={idx} className="p-2 bg-slate-50 rounded border border-slate-200">
-                      <div className="font-semibold text-slate-800">{sc.requirement_skill}</div>
-                      <div className="text-slate-500">Score: {sc.average_score} ({sc.status})</div>
+                    <div key={idx} className="p-2 bg-slate-900/90 rounded-lg border border-slate-800">
+                      <div className="font-semibold text-white">{sc.requirement_skill}</div>
+                      <div className="text-slate-400">Score: {sc.average_score} ({sc.status})</div>
                     </div>
                   ))}
-                  {(cand.requirement_scorecards || []).length === 0 && <span className="text-slate-400">No scorecards available</span>}
+                  {(cand.requirement_scorecards || []).length === 0 && <span className="text-slate-500">No scorecards available</span>}
                 </td>
               ))}
             </tr>

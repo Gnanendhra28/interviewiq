@@ -35,39 +35,39 @@ export default function NotificationsPage() {
   if (error) return <ErrorBanner message={(error as Error).message} />;
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 flex items-center space-x-2">
-          <Bell className="w-6 h-6 text-indigo-600" />
+    <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="border-b border-slate-800/80 pb-6">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center space-x-2">
+          <Bell className="w-6 h-6 text-indigo-400" />
           <span>Notification Center & Webhook Channels</span>
         </h1>
-        <p className="text-sm text-slate-500 mt-1">Manage in-app notifications and Slack/Teams webhook alert subscriptions.</p>
+        <p className="text-xs sm:text-sm text-slate-400 mt-1">Manage in-app notifications and Slack/Teams webhook alert subscriptions.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Slack/Teams Webhook Preferences */}
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
-          <h2 className="text-base font-bold text-slate-900 flex items-center space-x-2">
-            <Slack className="w-5 h-5 text-indigo-600" />
+        <div className="glass-panel p-6 rounded-xl border border-slate-800/80 shadow-2xl space-y-4">
+          <h2 className="text-base font-bold text-white flex items-center space-x-2">
+            <Slack className="w-5 h-5 text-indigo-400" />
             <span>Slack Webhook Subscription</span>
           </h2>
 
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1">Incoming Webhook URL</label>
+              <label className="block text-xs font-semibold text-slate-400 mb-1">Incoming Webhook URL</label>
               <input
                 type="text"
                 value={slackWebhookUrl}
                 onChange={(e) => setSlackWebhookUrl(e.target.value)}
                 placeholder="https://hooks.slack.com/services/..."
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono text-xs"
+                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 text-slate-100 rounded-lg text-xs font-mono focus:outline-none focus:border-indigo-500"
               />
             </div>
 
             <button
               onClick={() => saveSlackPrefMutation.mutate()}
               disabled={!slackWebhookUrl || saveSlackPrefMutation.isPending}
-              className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-lg transition disabled:opacity-50"
+              className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-indigo-600/30 transition disabled:opacity-50"
             >
               Save Slack Preference
             </button>
@@ -80,20 +80,20 @@ export default function NotificationsPage() {
             <div
               key={n.id}
               className={`p-4 rounded-xl border transition flex items-center justify-between ${
-                n.is_read ? 'bg-slate-50 border-slate-200' : 'bg-white border-indigo-200 shadow-sm'
+                n.is_read ? 'bg-slate-900/40 border-slate-800/60' : 'glass-panel border-indigo-500/40 shadow-xl'
               }`}
             >
               <div>
-                <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider">{n.channel}</span>
-                <h3 className="font-bold text-slate-900 text-sm mt-0.5">{n.title}</h3>
-                <p className="text-xs text-slate-600 mt-1">{n.message}</p>
+                <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider">{n.channel}</span>
+                <h3 className="font-bold text-white text-sm mt-0.5">{n.title}</h3>
+                <p className="text-xs text-slate-300 mt-1">{n.message}</p>
                 <span className="text-[10px] text-slate-400 block mt-1">{new Date(n.created_at).toLocaleString()}</span>
               </div>
 
               {!n.is_read && (
                 <button
                   onClick={() => markReadMutation.mutate(n.id)}
-                  className="p-2 text-slate-400 hover:text-emerald-600 rounded-lg"
+                  className="p-2 text-slate-400 hover:text-emerald-400 rounded-lg transition"
                   title="Mark as read"
                 >
                   <Check className="w-4 h-4" />
