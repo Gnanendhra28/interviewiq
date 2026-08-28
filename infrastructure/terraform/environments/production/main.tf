@@ -72,6 +72,8 @@ module "api" {
   max_instances         = 20
   cpu_limit             = "4"
   memory_limit          = "4Gi"
+  network_name          = module.networking.network_name
+  subnet_name           = module.networking.subnet_id
 
   depends_on = [module.secrets, module.database]
 }
@@ -88,6 +90,8 @@ module "workers" {
   max_instances         = 10
   cpu_limit             = "4"
   memory_limit          = "4Gi"
+  network_name          = module.networking.network_name
+  subnet_name           = module.networking.subnet_id
 
   depends_on = [module.secrets, module.database]
 }

@@ -47,3 +47,13 @@ variable "max_instances" {
   type    = number
   default = 10
 }
+
+variable "network_name" {
+  type    = string
+  default = null
+}
+
+variable "subnet_name" {
+  type    = string
+  default = null
+}

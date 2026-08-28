@@ -70,6 +70,8 @@ module "api" {
   jwt_secret_id         = module.secrets.jwt_secret_id
   min_instances         = 1
   max_instances         = 5
+  network_name          = module.networking.network_name
+  subnet_name           = module.networking.subnet_id
 
   depends_on = [module.secrets, module.database]
 }
@@ -84,6 +86,8 @@ module "workers" {
   db_url_secret_id      = module.secrets.db_url_secret_id
   min_instances         = 1
   max_instances         = 3
+  network_name          = module.networking.network_name
+  subnet_name           = module.networking.subnet_id
 
   depends_on = [module.secrets, module.database]
 }

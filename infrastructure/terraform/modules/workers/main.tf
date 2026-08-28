@@ -46,5 +46,16 @@ resource "google_cloud_run_v2_service" "worker_service" {
       min_instance_count = var.min_instances
       max_instance_count = var.max_instances
     }
+
+    dynamic "vpc_access" {
+      for_each = var.network_name != null && var.subnet_name != null ? [1] : []
+      content {
+        network_interfaces {
+          network    = var.network_name
+          subnetwork = var.subnet_name
+        }
+        egress = "ALL_TRAFFIC"
+      }
+    }
   }
 }
