@@ -11,7 +11,12 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "InterviewIQ API"
     
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
+    ALLOWED_ORIGINS: List[str] = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://interviewiq-staging-staging-web-q24ci75lba-uc.a.run.app",
+        "https://interviewiq-staging-staging-web-1084523036760.us-central1.run.app",
+    ]
 
     # Database
     POSTGRES_USER: str = "interviewiq"

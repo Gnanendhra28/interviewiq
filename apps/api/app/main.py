@@ -44,6 +44,25 @@ async def lifespan(app: FastAPI):
     # Fail-fast production configuration validation
     settings.validate_production_configuration()
     logger.info(f"Started InterviewIQ API in environment '{settings.ENVIRONMENT}'")
+
+    # Run database migrations on startup
+    try:
+        import asyncio
+        import os
+        from alembic.config import Config
+        from alembic import command
+
+        ini_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "alembic.ini"))
+        if os.path.exists(ini_path):
+            logger.info("Executing database migrations (alembic upgrade head)...")
+            alembic_cfg = Config(ini_path)
+            alembic_cfg.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+            loop = asyncio.get_running_loop()
+            await loop.run_in_executor(None, command.upgrade, alembic_cfg, "head")
+            logger.info("Database migrations completed successfully.")
+    except Exception as e:
+        logger.error(f"Failed to execute database migrations on startup: {e}")
+
     yield
     logger.info("Shutting down InterviewIQ API gracefully.")
 
@@ -64,6 +83,7 @@ app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
+    allow_origin_regex=r"https://.*\.run\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
