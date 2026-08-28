@@ -10,14 +10,9 @@ export const authService = {
   },
 
   async login(email: string, password: string): Promise<AuthResponse> {
-    const formData = new URLSearchParams();
-    formData.append('username', email);
-    formData.append('password', password);
-
     return fetchApi<AuthResponse>('/auth/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: formData.toString(),
+      body: JSON.stringify({ email, password }),
     });
   },
 
