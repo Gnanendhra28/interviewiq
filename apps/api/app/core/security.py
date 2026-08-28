@@ -45,4 +45,4 @@ def decode_token(token: str) -> Dict[str, Any]:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
         return payload
     except JWTError as e:
-        raise UnauthorizedException(f"Invalid or expired token: {str(e)}")
+        raise UnauthorizedException(f"Invalid or expired token: {str(e)}") from e
