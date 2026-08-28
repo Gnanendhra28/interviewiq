@@ -12,6 +12,8 @@ WORKDIR /app
 COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 COPY apps/web ./apps/web
 WORKDIR /app/apps/web
+ARG NEXT_PUBLIC_API_URL=https://interviewiq-staging-staging-api-q24ci75lba-uc.a.run.app/api/v1
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build
 

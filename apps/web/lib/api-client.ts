@@ -1,4 +1,17 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+export function getApiBaseUrl(): string {
+  if (process.env.NEXT_PUBLIC_API_URL && !process.env.NEXT_PUBLIC_API_URL.includes('localhost')) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname.includes('run.app') || hostname.includes('interviewiq')) {
+      return 'https://interviewiq-staging-staging-api-q24ci75lba-uc.a.run.app/api/v1';
+    }
+  }
+
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+}
 
 let accessTokenMemory: string | null = null;
 let activeOrganizationIdMemory: string | null = null;
@@ -75,7 +88,8 @@ export async function fetchApi<T>(endpoint: string, options: RequestInit = {}, i
   const reqId = `web_req_${Math.random().toString(36).substring(2, 10)}`;
   headers.set('X-Request-ID', reqId);
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
+  const baseUrl = getApiBaseUrl();
+  const response = await fetch(`${baseUrl}${endpoint}`, {
     ...options,
     headers,
     credentials: 'include', // Include HttpOnly refresh cookies
@@ -83,7 +97,7 @@ export async function fetchApi<T>(endpoint: string, options: RequestInit = {}, i
 
   if (response.status === 401 && !isRetry && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/refresh')) {
     try {
-      const refreshRes = await fetch(`${API_URL}/auth/refresh`, {
+      const refreshRes = await fetch(`${baseUrl}/auth/refresh`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
