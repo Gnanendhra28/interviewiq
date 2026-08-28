@@ -20,12 +20,16 @@ class AuthenticationProvider(ABC):
     """
 
     @abstractmethod
-    async def authenticate_credentials(self, credentials: Dict[str, Any]) -> Dict[str, Any]:
+    async def authenticate_credentials(
+        self, credentials: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Authenticate user credentials and return user domain context."""
         pass
 
     @abstractmethod
-    async def create_session_tokens(self, user_id: str, organization_id: str, role: str) -> Dict[str, str]:
+    async def create_session_tokens(
+        self, user_id: str, organization_id: str, role: str
+    ) -> Dict[str, str]:
         """Generate access and refresh token pair."""
         pass
 

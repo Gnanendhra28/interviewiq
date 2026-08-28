@@ -77,22 +77,30 @@ class AIProvider(ABC):
     """
 
     @abstractmethod
-    async def analyze_resume(self, file_bytes: bytes, file_type: str) -> CandidateProfileSchema:
+    async def analyze_resume(
+        self, file_bytes: bytes, file_type: str
+    ) -> CandidateProfileSchema:
         """Extract structured candidate profile from resume file."""
         pass
 
     @abstractmethod
-    async def generate_question(self, context: QuestionContext) -> InterviewQuestionSchema:
+    async def generate_question(
+        self, context: QuestionContext
+    ) -> InterviewQuestionSchema:
         """Generate role-grounded adaptive interview question with RAG context."""
         pass
 
     @abstractmethod
-    async def evaluate_answer(self, submission: AnswerSubmissionContext) -> EvaluationResultSchema:
+    async def evaluate_answer(
+        self, submission: AnswerSubmissionContext
+    ) -> EvaluationResultSchema:
         """Perform structured evaluation of candidate answer."""
         pass
 
     @abstractmethod
-    async def generate_report(self, session_summary: SessionSummaryContext) -> InterviewReportSchema:
+    async def generate_report(
+        self, session_summary: SessionSummaryContext
+    ) -> InterviewReportSchema:
         """Synthesize final interview performance report."""
         pass
 

@@ -8,7 +8,12 @@ class StorageProvider(ABC):
     """
 
     @abstractmethod
-    async def upload_file(self, file_bytes: bytes, destination_path: str, content_type: str = "application/pdf") -> str:
+    async def upload_file(
+        self,
+        file_bytes: bytes,
+        destination_path: str,
+        content_type: str = "application/pdf",
+    ) -> str:
         """Upload file to storage target and return reference URI."""
         pass
 
