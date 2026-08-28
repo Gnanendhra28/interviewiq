@@ -46,7 +46,7 @@ async def create_integration(
         raise HTTPException(status_code=400, detail=f"Unsupported provider type: {req.provider_type}")
 
     integration = IntegrationORM(
-        organization_id=auth_ctx.active_membership.organization_id,
+        organization_id=auth_ctx.organization_id,
         provider_type=req.provider_type,
         name=req.name,
         status="CONFIGURING",
@@ -71,7 +71,7 @@ async def list_integrations(
     auth_ctx: AuthorizationContext = Depends(get_active_org_context),
     db: AsyncSession = Depends(get_db)
 ):
-    stmt = select(IntegrationORM).where(IntegrationORM.organization_id == auth_ctx.active_membership.organization_id)
+    stmt = select(IntegrationORM).where(IntegrationORM.organization_id == auth_ctx.organization_id)
     result = await db.execute(stmt)
     integrations = result.scalars().all()
 
@@ -95,7 +95,7 @@ async def test_integration(
     db: AsyncSession = Depends(get_db)
 ):
     integration = await db.get(IntegrationORM, integration_id)
-    if not integration or integration.organization_id != auth_ctx.active_membership.organization_id:
+    if not integration or integration.organization_id != auth_ctx.organization_id:
         raise HTTPException(status_code=404, detail="Integration not found.")
 
     provider = PROVIDERS.get(integration.provider_type)
@@ -109,7 +109,7 @@ async def enable_integration(
     db: AsyncSession = Depends(get_db)
 ):
     integration = await db.get(IntegrationORM, integration_id)
-    if not integration or integration.organization_id != auth_ctx.active_membership.organization_id:
+    if not integration or integration.organization_id != auth_ctx.organization_id:
         raise HTTPException(status_code=404, detail="Integration not found.")
 
     integration.status = "ACTIVE"
@@ -123,7 +123,7 @@ async def disable_integration(
     db: AsyncSession = Depends(get_db)
 ):
     integration = await db.get(IntegrationORM, integration_id)
-    if not integration or integration.organization_id != auth_ctx.active_membership.organization_id:
+    if not integration or integration.organization_id != auth_ctx.organization_id:
         raise HTTPException(status_code=404, detail="Integration not found.")
 
     integration.status = "DISABLED"

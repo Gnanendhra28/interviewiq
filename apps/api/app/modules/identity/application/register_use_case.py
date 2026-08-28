@@ -38,14 +38,19 @@ class RegisterUseCase:
         # 2. Validate password policy
         default_password_policy.validate(password)
 
-        # 3. Create user (PENDING_VERIFICATION)
-        user = await self.user_repo.create(email=normalized_email, account_status="PENDING_VERIFICATION")
+        # 3. Create user (ACTIVE)
+        user = await self.user_repo.create(email=normalized_email, account_status="ACTIVE")
 
         # 4. Hash password with Argon2id & create credential
         password_hash = PasswordHasher.hash_password(password)
         await self.cred_repo.create(user_id=user.id, password_hash=password_hash, algo="argon2id")
 
-        # 5. Generate and persist one-time verification token
+        # 5. Provision default organization & recruiter membership
+        from apps.api.app.core.authorization.context import AuthorizationService
+        auth_service = AuthorizationService(self.db)
+        await auth_service.provision_default_organization(user)
+
+        # 6. Generate and persist one-time verification token
         raw_token = generate_opaque_token()
         token_hash_val = hash_token(raw_token)
         expires_at = datetime.now(timezone.utc) + timedelta(hours=24)

@@ -37,7 +37,7 @@ async def list_notifications(
 ):
     stmt = (
         select(NotificationDeliveryORM)
-        .where(NotificationDeliveryORM.organization_id == auth_ctx.active_membership.organization_id)
+        .where(NotificationDeliveryORM.organization_id == auth_ctx.organization_id)
         .where(NotificationDeliveryORM.user_id == auth_ctx.user.id)
         .order_by(NotificationDeliveryORM.created_at.desc())
         .limit(50)
@@ -80,7 +80,7 @@ async def get_notification_preferences(
 ):
     stmt = (
         select(NotificationPreferenceORM)
-        .where(NotificationPreferenceORM.organization_id == auth_ctx.active_membership.organization_id)
+        .where(NotificationPreferenceORM.organization_id == auth_ctx.organization_id)
         .where(NotificationPreferenceORM.user_id == auth_ctx.user.id)
     )
     result = await db.execute(stmt)
@@ -103,7 +103,7 @@ async def save_notification_preference(
 ):
     stmt = (
         select(NotificationPreferenceORM)
-        .where(NotificationPreferenceORM.organization_id == auth_ctx.active_membership.organization_id)
+        .where(NotificationPreferenceORM.organization_id == auth_ctx.organization_id)
         .where(NotificationPreferenceORM.user_id == auth_ctx.user.id)
         .where(NotificationPreferenceORM.channel == req.channel)
     )
@@ -115,7 +115,7 @@ async def save_notification_preference(
         pref.webhook_url = req.webhook_url
     else:
         pref = NotificationPreferenceORM(
-            organization_id=auth_ctx.active_membership.organization_id,
+            organization_id=auth_ctx.organization_id,
             user_id=auth_ctx.user.id,
             channel=req.channel,
             enabled_events_json=req.enabled_events_json,

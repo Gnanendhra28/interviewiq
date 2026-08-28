@@ -54,6 +54,36 @@ class AuthorizationService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
+    async def provision_default_organization(self, user: UserORM) -> OrganizationORM:
+        user_handle = user.email.split('@')[0]
+        org_name = f"{user_handle.capitalize()}'s Organization"
+        org_slug = f"{user_handle.lower()}-org-{uuid.uuid4().hex[:6]}"
+
+        org = OrganizationORM(
+            name=org_name,
+            slug=org_slug,
+            account_status="ACTIVE"
+        )
+        self.db.add(org)
+        await self.db.flush()
+
+        role_res = await self.db.execute(select(RoleORM).where(RoleORM.name.in_(["ORGANIZATION_ADMIN", "ADMIN", "RECRUITER"])))
+        role = role_res.scalars().first()
+        if not role:
+            role = RoleORM(name="ORGANIZATION_ADMIN", description="Default Organization Admin")
+            self.db.add(role)
+            await self.db.flush()
+
+        membership = OrganizationMembershipORM(
+            user_id=user.id,
+            organization_id=org.id,
+            role_id=role.id,
+            status="ACTIVE"
+        )
+        self.db.add(membership)
+        await self.db.commit()
+        return org
+
     async def resolve_authorization_context(
         self,
         user: UserORM,
@@ -63,11 +93,23 @@ class AuthorizationService:
         if user.account_status in ("SUSPENDED", "DISABLED"):
             raise DomainException("User account is suspended or disabled", code="AUTH_ACCOUNT_SUSPENDED")
 
-        if not requested_org_id:
-            return AuthorizationContext(user=user)
-
-        target_org_uuid = uuid.UUID(str(requested_org_id)) if isinstance(requested_org_id, (str, uuid.UUID)) else requested_org_id
         target_user_uuid = uuid.UUID(str(user.id)) if isinstance(user.id, (str, uuid.UUID)) else user.id
+
+        if not requested_org_id:
+            mem_res = await self.db.execute(
+                select(OrganizationMembershipORM).where(
+                    OrganizationMembershipORM.user_id == target_user_uuid,
+                    OrganizationMembershipORM.status == "ACTIVE"
+                ).order_by(OrganizationMembershipORM.created_at.asc())
+            )
+            first_mem = mem_res.scalars().first()
+            if first_mem:
+                target_org_uuid = first_mem.organization_id
+            else:
+                default_org = await self.provision_default_organization(user)
+                target_org_uuid = default_org.id
+        else:
+            target_org_uuid = uuid.UUID(str(requested_org_id)) if isinstance(requested_org_id, (str, uuid.UUID)) else requested_org_id
 
         # 1. Validate Organization Exists & Status == ACTIVE
         org_result = await self.db.execute(

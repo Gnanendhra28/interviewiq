@@ -36,7 +36,7 @@ async def request_pdf_export(
         raise HTTPException(status_code=404, detail="Interview report not found.")
 
     export = ReportExportORM(
-        organization_id=auth_ctx.active_membership.organization_id,
+        organization_id=auth_ctx.organization_id,
         interview_session_id=interview_id,
         interview_report_id=report_id,
         report_version=report.report_version,
@@ -47,7 +47,7 @@ async def request_pdf_export(
 
     # Enqueue Background Worker Task PDF_REPORT_GENERATION
     job = BackgroundJobORM(
-        organization_id=auth_ctx.active_membership.organization_id,
+        organization_id=auth_ctx.organization_id,
         job_type="PDF_REPORT_GENERATION",
         payload_json={"export_id": str(export.id)},
         status="QUEUED",
@@ -75,7 +75,7 @@ async def list_report_exports(
 ):
     stmt = (
         select(ReportExportORM)
-        .where(ReportExportORM.organization_id == auth_ctx.active_membership.organization_id)
+        .where(ReportExportORM.organization_id == auth_ctx.organization_id)
         .where(ReportExportORM.interview_report_id == report_id)
         .order_by(ReportExportORM.created_at.desc())
     )
@@ -102,7 +102,7 @@ async def download_pdf_export(
     db: AsyncSession = Depends(get_db)
 ):
     export = await db.get(ReportExportORM, export_id)
-    if not export or export.organization_id != auth_ctx.active_membership.organization_id:
+    if not export or export.organization_id != auth_ctx.organization_id:
         raise HTTPException(status_code=404, detail="Export not found.")
 
     if export.status != "READY" or not export.storage_object_key:
